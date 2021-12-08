@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  influxdb:
+    container_name: influxdb
+    image: influxdb:latest
+    volumes:
+      - influx-data:
+    ports:
+      - 8086:8086
+    restart: always
+    environment:
+      - DOCKER_INFLUXDB_INIT_BUCKET=jmeter
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password
+      - DOCKER_INFLUXDB_INIT_ORG=TestOrg
+
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    volumes:
+      - grafana-data:
+    links:
+      - influxdb:influxdb
+    ports:
+      - 3000:3000
+    depends_on:
+      - influxdb
+    restart: always
+
+
+volumes:
+  influx-data:
+    external: false
+
+  grafana-data:
+    external: false
